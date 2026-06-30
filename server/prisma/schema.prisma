@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  githubId  String   @unique
+  email     String?  @unique
+  username  String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions Session[]
+  repos    Repo[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique // Hashed session token
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Repo {
+  id           String   @id @default(cuid())
+  githubRepoId String   @unique
+  owner        String
+  name         String
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  rules  Rule[]
+  events Event[]
+}
+
+model Rule {
+  id        String   @id @default(cuid())
+  repoId    String
+  repo      Repo     @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  name      String
+  event     String   // e.g. "pull_request", "issues"
+  condition String   // JSON or query-like string to evaluate
+  action    String   // e.g. "add_label", "slack_message"
+  actionArgs String? // JSON string for action specific arguments
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id               String   @id @default(cuid())
+  repoId           String
+  repo      Repo     @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  githubDeliveryId String   @unique // for dedup
+  eventType        String
+  payload          String   // JSON string of the payload
+  status           String   // PENDING, PROCESSED, FAILED, IGNORED
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
