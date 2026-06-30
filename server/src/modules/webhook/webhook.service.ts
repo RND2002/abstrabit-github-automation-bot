@@ -139,10 +139,13 @@ const interpolateTemplate = (template: string, payload: any): string => {
     const parts = key.trim().split('.');
     let value = payload;
     for (const part of parts) {
-      if (value == null) break;
+      if (value == null) {
+        value = undefined;
+        break;
+      }
       value = value[part];
     }
-    return value !== undefined && value !== null ? String(value) : match;
+    return value !== undefined && value !== null ? String(value) : '';
   });
 };
 
