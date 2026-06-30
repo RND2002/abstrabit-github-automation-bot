@@ -4,4 +4,4 @@ This repository contains the source code for the Abstrabit project, a GitHub aut
 
 ## Project Structure
 
-- `/server`: The backend server handling authentication and automation workflows.
+- `/server`: The backend server handling authentication and automation workflowss.
