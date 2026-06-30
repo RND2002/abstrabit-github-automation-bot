@@ -24,6 +24,20 @@ export const findValid = async (id: string) => {
   });
 };
 
+export const findValidByUserId = async (userId: string) => {
+  return prisma.session.findFirst({
+    where: {
+      userId,
+      expiresAt: {
+        gt: new Date(),
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+};
+
 export const revoke = async (id: string) => {
   return prisma.session.delete({
     where: { id },

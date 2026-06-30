@@ -41,6 +41,7 @@ model Repo {
   name         String
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slackWebhookUrl String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -57,6 +58,9 @@ model Rule {
   condition String   // JSON or query-like string to evaluate
   action    String   // e.g. "add_label", "slack_message"
   actionArgs String? // JSON string for action specific arguments
+  slackWebhookUrl String? // Override for this specific rule
+  slackAlert Boolean @default(false)
+  slackMessage String?
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,6 +74,11 @@ model Event {
   eventType        String
   payload          String   // JSON string of the payload
   status           String   // PENDING, PROCESSED, FAILED, IGNORED
+  aiSummary        String?
+  aiPriority       String?
+  aiSuggestedLabel String?
+  errorLog         String?
+  retryCount       Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

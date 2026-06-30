@@ -1,9 +1,6 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
 
-// Load variables early, though index/server might have done it, good to ensure
-// We don't call it here to avoid duplicate loading issues when using dotenv-cli
-// dotenv.config();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -15,6 +12,9 @@ const envSchema = z.object({
   ENCRYPTION_KEY: z.string().min(32).describe('AES encryption key (32 chars)'),
   SESSION_SECRET: z.string().min(32),
   FRONTEND_URL: z.string().url(),
+  WEBHOOK_SECRET: z.string().min(8),
+  API_URL: z.string().url().optional(),
+  OPENROUTER_API_KEY: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);

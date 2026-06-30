@@ -40,3 +40,60 @@ export const getUserProfile = async (accessToken: string) => {
 
   return response.data;
 };
+
+export const listUserRepos = async (accessToken: string) => {
+  const response = await githubClient.get('/user/repos', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    params: {
+      per_page: 100,
+      sort: 'updated',
+    },
+  });
+
+  return response.data;
+};
+
+export const createWebhook = async (
+  accessToken: string,
+  owner: string,
+  repo: string,
+  webhookUrl: string,
+  secret: string
+) => {
+  const response = await githubClient.post(
+    `/repos/${owner}/${repo}/hooks`,
+    {
+      name: 'web',
+      active: true,
+      events: ['*'], // Or specifically ['issues', 'pull_request', 'push']
+      config: {
+        url: webhookUrl,
+        content_type: 'json',
+        secret: secret,
+        insecure_ssl: '0',
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const deleteWebhook = async (
+  accessToken: string,
+  owner: string,
+  repo: string,
+  hookId: number
+) => {
+  await githubClient.delete(`/repos/${owner}/${repo}/hooks/${hookId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

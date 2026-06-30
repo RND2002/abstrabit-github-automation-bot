@@ -25,7 +25,7 @@ export const callback = async (req: Request, res: Response) => {
     sameSite: 'lax',
   });
 
-  res.redirect(env.FRONTEND_URL + '/dashboard');
+  res.redirect(env.FRONTEND_URL + '/');
 };
 
 export const logout = async (req: Request, res: Response) => {

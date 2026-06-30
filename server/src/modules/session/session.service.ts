@@ -28,6 +28,17 @@ export const validateSession = async (sessionId: string) => {
   };
 };
 
+export const getValidSessionForUser = async (userId: string) => {
+  const session = await sessionRepository.findValidByUserId(userId);
+  if (!session) return null;
+  
+  const decryptedToken = decrypt(session.token);
+  return {
+    ...session,
+    token: decryptedToken,
+  };
+};
+
 export const revokeSession = async (sessionId: string) => {
   return sessionRepository.revoke(sessionId);
 };
