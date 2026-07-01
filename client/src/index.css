@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    --background: #14151C;
+    --foreground: #ede0d5;
+    
+    --card: #1C1E29;
+    --card-foreground: #ede0d5;
+    
+    --popover: #1C1E29;
+    --popover-foreground: #ede0d5;
+    
+    --primary: #ffc16c;
+    --primary-foreground: #462b00;
+    
+    --secondary: #68dbad;
+    --secondary-foreground: #003827;
+    
+    --muted: #2A2C3A;
+    --muted-foreground: #d6c4b0;
+    
+    --accent: #2A2C3A;
+    --accent-foreground: #ede0d5;
+    
+    --destructive: #ffb4ab;
+    --destructive-foreground: #690005;
+    
+    --border: #2A2C3A;
+    --input: #14151C;
+    --ring: #ffc16c;
+    
+    --radius: 0.25rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Custom Scrollbar for brutalist theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+    border-left: 1px solid var(--border);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border);
+  }
+}
