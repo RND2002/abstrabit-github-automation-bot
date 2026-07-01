@@ -61,7 +61,11 @@ export const RepoDetails: React.FC = () => {
   useEffect(() => {
     fetchData();
     // In a real app we'd use WebSockets. For now, simple polling for "live log".
-    const intervalId = setInterval(fetchData, 10000);
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchData();
+      }
+    }, 10000);
     return () => clearInterval(intervalId);
   }, [fetchData]);
 
@@ -130,16 +134,16 @@ export const RepoDetails: React.FC = () => {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-mono font-bold tracking-tight text-primary">{repo?.name || 'Loading...'}</h1>
+          <h1 className="text-2xl sm:text-3xl font-mono font-bold tracking-tight text-primary">{repo?.name || 'Loading...'}</h1>
           <p className="text-muted-foreground font-mono text-sm">{repo?.owner}</p>
         </div>
       </div>
 
       <Tabs defaultValue="rules" className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-2xl">
-          <TabsTrigger value="rules">Automation Rules</TabsTrigger>
-          <TabsTrigger value="events">Event Log</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="rules" className="text-xs sm:text-sm">Rules</TabsTrigger>
+          <TabsTrigger value="events" className="text-xs sm:text-sm">Event Log</TabsTrigger>
+          <TabsTrigger value="settings" className="text-xs sm:text-sm">Settings</TabsTrigger>
         </TabsList>
         
         <TabsContent value="rules" className="mt-6 space-y-6">
@@ -195,7 +199,7 @@ export const RepoDetails: React.FC = () => {
                     <div key={event.id} className="flex flex-col p-4 border rounded-lg bg-card gap-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                         <div className="space-y-1">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span className="font-mono font-semibold">{event.eventType}</span>
                             <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider font-mono border ${
                               event.status === 'PROCESSED' ? 'bg-secondary/10 text-secondary border-secondary' :

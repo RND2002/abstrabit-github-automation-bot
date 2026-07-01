@@ -1,16 +1,17 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../store/hooks';
 import { logoutUser } from '../store/authSlice';
 import { Button } from './ui/button';
 import { LogOut, GitBranch } from 'lucide-react';
 
 export const Layout: React.FC = () => {
   const { user } = useSelector((state: any) => state.auth);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    dispatch(logoutUser() as any);
+    dispatch(logoutUser());
   };
 
   return (

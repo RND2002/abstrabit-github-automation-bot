@@ -221,7 +221,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(handleSubmitWrapper)} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
             <div className="space-y-2">
               <Label htmlFor="name">Rule Name</Label>
@@ -244,7 +244,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
               {form.formState.errors.event && <p className="text-sm text-destructive">{form.formState.errors.event.message}</p>}
             </div>
 
-            <div className="space-y-2 col-span-2">
+            <div className="space-y-2 sm:col-span-2">
               {isAdvancedMode ? (
                 <>
                   <Label htmlFor="condition" className="flex items-center justify-between">
@@ -328,7 +328,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
             </div>
 
             {watchAction !== 'SLACK_MESSAGE' && (
-              <div className="space-y-2 col-span-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="actionArgs" className="block mb-1">Action Arguments (JSON)</Label>
                 <div className="flex flex-wrap gap-1 mb-2">
                   {TEMPLATE_VARIABLES.map(variable => (
@@ -354,7 +354,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
             )}
 
             {watchAction === 'SLACK_MESSAGE' || sendSlackAlert ? (
-              <div className="space-y-4 col-span-2 p-4 border border-border bg-muted/20 rounded-md">
+              <div className="space-y-4 sm:col-span-2 p-4 border border-border bg-muted/20 rounded-md">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-mono font-semibold text-sm">Slack Configuration {sendSlackAlert && watchAction !== 'SLACK_MESSAGE' && "(Secondary Action)"}</h4>
                   {watchAction !== 'SLACK_MESSAGE' && (
@@ -379,7 +379,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
                     id="slackMessage" 
                     rows={2}
                     value={slackMessage}
-                    onChange={(e: any) => setSlackMessage(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSlackMessage(e.target.value)}
                     className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 font-mono" 
                   />
                 </div>
@@ -394,7 +394,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
                         id="slackWebhookUrl" 
                         placeholder={repoSlackUrl ? "Leave blank to use Repo Default" : "https://hooks.slack.com/services/..."} 
                         value={slackWebhookUrl}
-                        onChange={(e: any) => setSlackWebhookUrl(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSlackWebhookUrl(e.target.value)}
                         className="font-mono text-xs" 
                       />
                       <Button 
@@ -415,7 +415,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
             ) : null}
             
             {watchAction !== 'SLACK_MESSAGE' && !sendSlackAlert && (
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -427,7 +427,7 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({ repoSlackUrl, recentEv
               </div>
             )}
             
-            <div className="mt-4 col-span-2 p-4 border border-border bg-muted/30 rounded-md">
+            <div className="mt-4 sm:col-span-2 p-4 border border-border bg-muted/30 rounded-md">
               <p className="text-xs font-mono font-medium text-muted-foreground mb-2 uppercase tracking-wider">Preview</p>
               <div className="text-sm font-sans whitespace-pre-wrap">
                 {watchAction === 'SLACK_MESSAGE' 

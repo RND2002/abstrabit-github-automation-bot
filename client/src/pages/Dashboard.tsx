@@ -33,7 +33,11 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch(fetchConnectedRepos());
     fetchEvents();
-    const interval = setInterval(fetchEvents, 10000);
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchEvents();
+      }
+    }, 10000);
     return () => clearInterval(interval);
   }, [dispatch, fetchEvents]);
 
@@ -188,9 +192,9 @@ export const Dashboard: React.FC = () => {
                     <div key={event.id} className="flex flex-col p-4 border rounded-lg bg-card gap-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                         <div className="space-y-1">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span className="font-mono font-semibold">{(event as any).repo?.name}</span>
-                            <span className="text-muted-foreground px-1">/</span>
+                            <span className="text-muted-foreground">/</span>
                             <span className="font-mono text-sm">{event.eventType}</span>
                             <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider font-mono border ${
                               event.status === 'PROCESSED' ? 'bg-secondary/10 text-secondary border-secondary' :

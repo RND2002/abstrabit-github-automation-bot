@@ -1,20 +1,20 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from './store/hooks';
 import { fetchUser, setUnauthorized } from './store/authSlice';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
-
+ 
 import { RepoDetails } from './pages/RepoDetails';
-
+ 
 function App() {
-  const dispatch = useDispatch();
-
+  const dispatch = useAppDispatch();
+ 
   useEffect(() => {
     // Initial fetch to check auth status
-    dispatch(fetchUser() as any);
+    dispatch(fetchUser());
 
     // Listen for unauthorized events from axios interceptor
     const handleUnauthorized = () => {
