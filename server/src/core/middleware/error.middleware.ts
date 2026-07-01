@@ -4,6 +4,8 @@ import { ZodError } from 'zod';
 import { ApiError } from '../utils/apiError';
 import { env } from '../../config/env';
 import { logger } from '../utils/logger';
+import { revokeSession } from '../../modules/session/session.service';
+import { Constants } from '../../config/constants';
 
 export const errorConverter = (
   err: any,
@@ -59,6 +61,26 @@ export const errorHandler = (
     query: req.query,
     params: req.params,
   });
+
+  // Handle 401 Unauthorized globally by clearing cookie and revoking session
+  if (statusCode === 401) {
+    const isSecure = env.NODE_ENV === 'production' || 
+                     env.API_URL?.startsWith('https') || 
+                     req.secure || 
+                     req.headers['x-forwarded-proto'] === 'https';
+
+    res.clearCookie(Constants.Cookie.Session, {
+      httpOnly: true,
+      secure: isSecure,
+      sameSite: 'none',
+    });
+
+    if (req.sessionId) {
+      revokeSession(req.sessionId).catch((error) => {
+        logger.error({ err: error }, 'Failed to revoke session during 401 handling');
+      });
+    }
+  }
 
   // Hide internal errors from clients in production
   if (isProduction && !err.isOperational) {

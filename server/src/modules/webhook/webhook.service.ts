@@ -212,9 +212,24 @@ const triggerAction = async (rule: any, repo: any, event: any) => {
     const parsedPayload = JSON.parse(event.payload);
     const issueNumber = parsedPayload.issue?.number || parsedPayload.pull_request?.number;
     if (issueNumber && rule.actionArgs) {
-      const { body } = JSON.parse(rule.actionArgs); // e.g. { "body": "Hello!" }
-      const finalBody = interpolateTemplate(body, parsedPayload);
-      await githubActionService.postComment(githubToken, repo.owner, repo.name, issueNumber, finalBody);
+      let commentBody = '';
+      try {
+        const parsedArgs = JSON.parse(rule.actionArgs);
+        if (typeof parsedArgs === 'object' && parsedArgs !== null) {
+          commentBody = parsedArgs.body || parsedArgs.message || '';
+        } else if (typeof parsedArgs === 'string') {
+          commentBody = parsedArgs;
+        }
+      } catch (e) {
+        commentBody = rule.actionArgs;
+      }
+
+      if (commentBody) {
+        const finalBody = interpolateTemplate(commentBody, parsedPayload);
+        await githubActionService.postComment(githubToken, repo.owner, repo.name, issueNumber, finalBody);
+      } else {
+        logger.warn({ ruleId: rule.id }, 'GitHub comment body is empty or not provided');
+      }
     }
   } else if (rule.action === 'SLACK_MESSAGE') {
     const parsedPayload = JSON.parse(event.payload);

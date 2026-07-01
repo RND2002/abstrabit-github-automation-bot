@@ -18,9 +18,14 @@ export const callback = async (req: Request, res: Response) => {
 
   const { session } = await handleGithubCallback(code);
 
+  const isSecure = env.NODE_ENV === 'production' || 
+                   env.API_URL?.startsWith('https') || 
+                   req.secure || 
+                   req.headers['x-forwarded-proto'] === 'https';
+
   res.cookie(Constants.Cookie.Session, session.id, {
     httpOnly: true,
-    secure: env.NODE_ENV === 'production',
+    secure: isSecure,
     maxAge: Constants.Auth.SessionExpiryDays * 24 * 60 * 60 * 1000,
     sameSite: 'none',
   });
@@ -33,10 +38,20 @@ export const logout = async (req: Request, res: Response) => {
     await revokeSession(req.sessionId);
   }
 
-  res.clearCookie(Constants.Cookie.Session);
+  const isSecure = env.NODE_ENV === 'production' || 
+                   env.API_URL?.startsWith('https') || 
+                   req.secure || 
+                   req.headers['x-forwarded-proto'] === 'https';
+
+  res.clearCookie(Constants.Cookie.Session, {
+    httpOnly: true,
+    secure: isSecure,
+    sameSite: 'none',
+  });
   res.status(200).send({ success: true });
 };
 
 export const me = (req: Request, res: Response) => {
   res.status(200).send({ user: req.user });
 };
+
