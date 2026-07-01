@@ -7,7 +7,7 @@ import { GitBranch } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, loading } = useSelector((state: any) => state.auth);
-
+  const API_URL = import.meta.env.VITE_API_URL;
   if (loading) {
     return <div className="flex justify-center mt-20">Loading...</div>;
   }
@@ -16,9 +16,11 @@ export const Login: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+
+
   const handleLogin = () => {
     // Redirect to backend OAuth route
-    window.location.href = 'http://localhost:8000/api/auth/redirect';
+    window.location.href = `${API_URL}/api/auth/redirect`;
   };
 
   return (
