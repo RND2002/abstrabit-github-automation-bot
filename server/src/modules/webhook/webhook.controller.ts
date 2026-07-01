@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as webhookService from './webhook.service';
 import { ApiError } from '../../core/utils/apiError';
+import { logger } from '../../core/utils/logger';
 
 export const handleGithubWebhook = async (req: Request, res: Response) => {
   const signature = req.headers['x-hub-signature-256'] as string;
@@ -20,12 +21,11 @@ export const handleGithubWebhook = async (req: Request, res: Response) => {
   const payload = req.body;
   const githubRepoId = payload?.repository?.id?.toString();
 
-  console.log(`\n=== Received GitHub Webhook ===`);
-  console.log(`Event Type: ${eventType}`);
-  console.log(`Delivery ID: ${deliveryId}`);
-  console.log(`Repository ID: ${githubRepoId}`);
-  console.log(`Payload Data:`, JSON.stringify(payload, null, 2).substring(0, 500) + '... [truncated]');
-  console.log(`===============================\n`);
+  logger.info({
+    eventType,
+    deliveryId,
+    githubRepoId,
+  }, 'Received GitHub webhook');
 
   if (!githubRepoId) {
     // If it's an event not tied to a repository (like ping or organization), we just return 200

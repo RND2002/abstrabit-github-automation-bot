@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
+import axios from 'axios';
 import * as ruleService from './rule.service';
-import { CreateRuleSchema } from './rule.schema';
+import { CreateRuleSchema, VerifySlackSchema } from './rule.schema';
 import { ApiError } from '../../core/utils/apiError';
+import { logger } from '../../core/utils/logger';
 import * as repoRepository from '../repo/repo.repository';
 
 export const createRule = async (req: Request, res: Response) => {
@@ -38,29 +40,33 @@ export const getRules = async (req: Request, res: Response) => {
 
 export const deleteRule = async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const { id } = req.params;
+  const ruleId = req.params.id as string;
 
-  // Ideally verify rule belongs to a repo owned by the user.
-  // Skipping full checks for brevity, assuming standard safety.
-  const ruleId = id as string;
+  // Verify rule belongs to a repo owned by the user
+  const rule = await ruleService.getRuleById(ruleId);
+  if (!rule) {
+    throw new ApiError(404, 'Rule not found');
+  }
+
+  const repo = await repoRepository.getRepoById(rule.repoId);
+  if (!repo || repo.userId !== userId) {
+    throw new ApiError(403, 'Forbidden');
+  }
+
   await ruleService.deleteRule(ruleId);
   res.status(200).send({ success: true });
 };
 
 export const verifySlackWebhook = async (req: Request, res: Response) => {
-  const { webhookUrl } = req.body;
-  if (!webhookUrl) {
-    throw new ApiError(400, 'Webhook URL is required');
-  }
+  const { webhookUrl } = req.body as VerifySlackSchema;
 
   try {
-    const axios = require('axios');
     await axios.post(webhookUrl, {
       text: 'Hello! This is a test ping from abstrabit to verify your webhook connection.'
     });
     res.status(200).send({ success: true });
   } catch (error: any) {
-    console.error('Slack verify ping failed:', error.message);
+    logger.warn({ err: error, webhookUrl }, 'Slack verify ping failed');
     throw new ApiError(400, 'Failed to verify webhook URL. Please check if the URL is valid.');
   }
 };

@@ -1,3 +1,5 @@
+export { EventStatus } from '../../config/constants';
+
 export interface Event {
   id: string;
   repoId: string;
@@ -5,13 +7,11 @@ export interface Event {
   eventType: string;
   payload: string;
   status: string;
+  aiSummary: string | null;
+  aiPriority: string | null;
+  aiSuggestedLabel: string | null;
+  errorLog: string | null;
+  retryCount: number;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export enum EventStatus {
-  PENDING = 'PENDING',
-  PROCESSED = 'PROCESSED',
-  FAILED = 'FAILED',
-  IGNORED = 'IGNORED',
 }

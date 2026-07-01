@@ -1,4 +1,6 @@
 import { prisma } from '../../core/db/prisma';
+import { Constants } from '../../config/constants';
+import { logger } from '../../core/utils/logger';
 import * as eventRepository from './event.repository';
 import { dispatchToRuleEngine } from '../webhook/webhook.service';
 import { ApiError } from '../../core/utils/apiError';
@@ -61,10 +63,18 @@ export const retryEvent = async (eventId: string, userId: string) => {
   if (!event) throw new ApiError(404, 'Event not found');
   if (event.repo.userId !== userId) throw new ApiError(403, 'Forbidden');
 
+  if (event.retryCount >= Constants.Retry.MaxRetries) {
+    throw new ApiError(400, `Maximum retry limit (${Constants.Retry.MaxRetries}) reached`);
+  }
+
   await eventRepository.incrementEventRetry(eventId);
   
+  logger.info({ eventId, retryCount: event.retryCount + 1 }, 'Manual event retry initiated');
+
   // Re-trigger the rule engine processing in background
-  dispatchToRuleEngine(eventId).catch(console.error);
+  dispatchToRuleEngine(eventId).catch((err) => {
+    logger.error({ err, eventId }, 'Unhandled error during event retry');
+  });
 
   return { success: true, message: 'Event retry initiated' };
 };

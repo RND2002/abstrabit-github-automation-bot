@@ -31,6 +31,12 @@ export const getActiveRulesByRepoId = async (repoId: string): Promise<Rule[]> =>
   });
 };
 
+export const getRuleById = async (id: string): Promise<Rule | null> => {
+  return prisma.rule.findUnique({
+    where: { id },
+  });
+};
+
 export const deleteRule = async (id: string): Promise<void> => {
   await prisma.rule.delete({
     where: { id },

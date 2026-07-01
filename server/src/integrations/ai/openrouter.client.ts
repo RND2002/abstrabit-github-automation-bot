@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { env } from '../../config/env';
+import { logger } from '../../core/utils/logger';
 
 export interface AiTriageResult {
   summary: string | null;
@@ -62,11 +63,11 @@ Body: ${body}
           suggestedLabel: parsed.suggestedLabel || null,
         };
       } catch (e) {
-        console.error('Failed to parse OpenRouter JSON response:', content);
+        logger.warn({ content }, 'Failed to parse OpenRouter JSON response');
       }
     }
   } catch (error: any) {
-    console.error('Failed to analyze with OpenRouter:', error?.response?.data || error.message);
+    logger.error({ err: error }, 'Failed to analyze with OpenRouter');
   }
 
   return null;

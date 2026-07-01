@@ -1,5 +1,6 @@
 import { prisma } from '../../core/db/prisma';
-import { Event, EventStatus } from './event.types';
+import { Event } from './event.types';
+import { EventStatus } from '../../config/constants';
 
 export const createEvent = async (
   repoId: string,

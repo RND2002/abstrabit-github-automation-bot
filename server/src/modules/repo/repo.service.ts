@@ -1,6 +1,7 @@
 import * as repoRepository from './repo.repository';
 import { listUserRepos, createWebhook, deleteWebhook } from '../../integrations/github/github.client';
 import { ApiError } from '../../core/utils/apiError';
+import { logger } from '../../core/utils/logger';
 import { env } from '../../config/env';
 
 export const listGithubRepos = async (githubToken: string) => {
@@ -29,7 +30,7 @@ export const connectRepo = async (
   } catch (error: any) {
     // If the webhook already exists, GitHub returns 422. We can safely ignore this and proceed.
     if (error.response?.status === 422) {
-      console.warn(`Webhook already exists for ${owner}/${name}. Proceeding with connection.`);
+      logger.warn({ owner, name }, 'Webhook already exists — proceeding with connection');
     } else {
       throw new ApiError(400, `Failed to create webhook: ${error.message}`);
     }
