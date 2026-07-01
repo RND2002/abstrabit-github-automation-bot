@@ -20,7 +20,7 @@ export const Login: React.FC = () => {
 
   const handleLogin = () => {
     // Redirect to backend OAuth route
-    window.location.href = `${API_URL}/api/auth/redirect`;
+    window.location.href = `${API_URL}/auth/redirect`;
   };
 
   return (
