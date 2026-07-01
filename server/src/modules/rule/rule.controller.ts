@@ -20,7 +20,7 @@ export const createRule = async (req: Request, res: Response) => {
 
 export const getRules = async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const { repoId } = req.params;
+  const repoId = req.params.repoId as string;
 
   if (!repoId) {
     throw new ApiError(400, 'Repo ID is required');
