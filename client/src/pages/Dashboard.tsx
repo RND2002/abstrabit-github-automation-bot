@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { ConfirmDialog } from '../components/ui/confirm-dialog';
 import { GithubRepo, Event } from '../types';
 import { RepoCard } from '../components/RepoCard';
+import { Input } from '../components/ui/input';
 
 export const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,6 +21,7 @@ export const Dashboard: React.FC = () => {
   const [connectingId, setConnectingId] = useState<string | null>(null);
   const [disconnectData, setDisconnectData] = useState<{id: string, name: string} | null>(null);
   const [globalEvents, setGlobalEvents] = useState<Event[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -43,6 +45,7 @@ export const Dashboard: React.FC = () => {
 
   const handleOpenDialog = () => {
     setIsDialogOpen(true);
+    setSearchQuery('');
     dispatch(fetchAvailableRepos());
   };
 
@@ -102,22 +105,40 @@ export const Dashboard: React.FC = () => {
                 Select a GitHub repository to enable abstrabit automation.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-4 space-y-4 w-full min-w-0">
+            <div className="mt-4">
+              <Input
+                placeholder="Search repositories..."
+                value={searchQuery}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                className="font-sans mb-4 text-sm"
+              />
+            </div>
+            <div className="mt-2 space-y-4 w-full min-w-0">
               {loading && availableRepos.length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground font-mono text-sm">Loading repositories...</div>
+              ) : availableRepos.filter(repo => 
+                  repo.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                  repo.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+                ).length === 0 ? (
+                <div className="text-center py-4 text-muted-foreground font-mono text-sm">No repositories found.</div>
               ) : (
-                availableRepos.map((repo) => {
-                  const isConnected = connectedRepos.some((c) => c.githubRepoId === repo.id.toString());
-                  return (
-                    <RepoCard 
-                      key={repo.id}
-                      repo={repo}
-                      isConnected={isConnected}
-                      connectingId={connectingId}
-                      onConnect={handleConnect}
-                    />
-                  );
-                })
+                availableRepos
+                  .filter(repo => 
+                    repo.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    repo.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((repo) => {
+                    const isConnected = connectedRepos.some((c) => c.githubRepoId === repo.id.toString());
+                    return (
+                      <RepoCard 
+                        key={repo.id}
+                        repo={repo}
+                        isConnected={isConnected}
+                        connectingId={connectingId}
+                        onConnect={handleConnect}
+                      />
+                    );
+                  })
               )}
             </div>
           </DialogContent>

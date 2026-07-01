@@ -2,7 +2,7 @@ import { Session } from '@prisma/client';
 
 export type SessionCreateInput = {
   userId: string;
-  token: string; // The raw github access token, which will be encrypted
+  token: string;
   expiresAt: Date;
 };
 

@@ -4,7 +4,7 @@ import { Constants } from '../../config/constants';
 
 export const createSession = async (userId: string, githubToken: string) => {
   const encryptedToken = encrypt(githubToken);
-  
+
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + Constants.Auth.SessionExpiryDays);
 
@@ -13,13 +13,10 @@ export const createSession = async (userId: string, githubToken: string) => {
 
 export const validateSession = async (sessionId: string) => {
   const session = await sessionRepository.findValid(sessionId);
-  
+
   if (!session) {
     return null;
   }
-
-  // Decrypt token on the fly when validating if we need to return it, 
-  // or we can just return the user. Usually we need the token for GitHub API calls.
   const decryptedToken = decrypt(session.token);
 
   return {
@@ -31,7 +28,7 @@ export const validateSession = async (sessionId: string) => {
 export const getValidSessionForUser = async (userId: string) => {
   const session = await sessionRepository.findValidByUserId(userId);
   if (!session) return null;
-  
+
   const decryptedToken = decrypt(session.token);
   return {
     ...session,

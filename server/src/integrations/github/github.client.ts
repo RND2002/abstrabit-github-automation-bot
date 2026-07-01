@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { env } from '../../config/env';
+import { ApiError } from '../../core/utils/apiError';
 
 export const githubClient = axios.create({
   baseURL: 'https://api.github.com',
@@ -7,6 +8,16 @@ export const githubClient = axios.create({
     Accept: 'application/vnd.github.v3+json',
   },
 });
+
+githubClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      return Promise.reject(new ApiError(401, 'GitHub access token is invalid or expired. Please sign in again.'));
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const exchangeCodeForToken = async (code: string) => {
   const response = await axios.post(

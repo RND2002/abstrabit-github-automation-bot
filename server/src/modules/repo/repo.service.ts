@@ -5,7 +5,8 @@ import { logger } from '../../core/utils/logger';
 import { env } from '../../config/env';
 
 export const listGithubRepos = async (githubToken: string) => {
-  return listUserRepos(githubToken);
+  const repos = await listUserRepos(githubToken);
+  return repos.filter((repo: any) => repo.permissions?.admin === true);
 };
 
 export const connectRepo = async (
@@ -21,14 +22,11 @@ export const connectRepo = async (
     throw new ApiError(400, 'Repository is already connected');
   }
 
-  // Create GitHub webhook
-  // We need the public URL where GitHub will send webhooks.
   const webhookUrl = `${env.API_URL || 'https://abstrabit.onrender.com'}/api/webhook/github`;
-  
+
   try {
     await createWebhook(githubToken, owner, name, webhookUrl, env.WEBHOOK_SECRET);
   } catch (error: any) {
-    // If the webhook already exists, GitHub returns 422. We can safely ignore this and proceed.
     if (error.response?.status === 422) {
       logger.warn({ owner, name }, 'Webhook already exists — proceeding with connection');
     } else {
@@ -50,11 +48,7 @@ export const disconnectRepo = async (userId: string, githubToken: string, repoId
     throw new ApiError(403, 'Forbidden');
   }
 
-  // Ideally, we'd delete the webhook here.
-  // But we need the hook ID from GitHub. If we didn't save it in DB, we could fetch hooks and find it.
-  // For now, we will just delete from DB.
-  // To do a full implementation, we'd need to save hookId in DB, or fetch hooks to delete.
-  
+
   await repoRepository.deleteRepo(repoId);
 };
 

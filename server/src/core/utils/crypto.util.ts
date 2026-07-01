@@ -4,8 +4,6 @@ import { env } from '../../config/env';
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const SALT_LENGTH = 64;
-const TAG_LENGTH = 16;
-const KEY_LENGTH = 32;
 
 // The encryption key must be 32 chars
 const getEncryptionKey = () => {
@@ -18,10 +16,10 @@ export const encrypt = (text: string): string => {
   const key = getEncryptionKey();
 
   const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
-  
+
   let encrypted = cipher.update(text, 'utf8', 'hex');
   encrypted += cipher.final('hex');
-  
+
   const tag = cipher.getAuthTag();
 
   // Return formatted string: iv:salt:tag:encryptedData
@@ -30,7 +28,7 @@ export const encrypt = (text: string): string => {
 
 export const decrypt = (encryptedText: string): string => {
   const textParts = encryptedText.split(':');
-  
+
   if (textParts.length !== 4) {
     throw new Error('Invalid encrypted text format');
   }
