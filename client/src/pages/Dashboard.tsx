@@ -85,12 +85,12 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-mono font-bold tracking-tight text-primary">Dashboard</h1>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleOpenDialog}>
+            <Button onClick={handleOpenDialog} className="w-fit">
               <Plus className="mr-2 h-4 w-4" />
               Connect Repository
             </Button>
@@ -147,7 +147,7 @@ export const Dashboard: React.FC = () => {
               <CardHeader>
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1 min-w-0 flex-1">
-                    <CardTitle className="text-lg font-mono truncate text-primary" title={repo.name}>
+                    <CardTitle className="text-lg font-mono break-words text-primary" title={repo.name}>
                       {repo.name}
                     </CardTitle>
                     <CardDescription className="font-mono text-xs truncate">{repo.owner}</CardDescription>
@@ -155,19 +155,19 @@ export const Dashboard: React.FC = () => {
                   <GitBranch className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                 </div>
               </CardHeader>
-              <CardFooter className="flex justify-between items-center mt-auto pt-4 border-t border-border">
+              <CardFooter className="flex flex-row justify-between items-center mt-auto pt-4 border-t border-border gap-2">
                 <Button 
                   variant="destructive" 
-                  size="sm" 
+                  className="h-8 px-2.5 text-xs"
                   onClick={() => setDisconnectData({id: repo.id, name: repo.name})}
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-3.5 w-3.5 mr-1" />
                   Disconnect
                 </Button>
                 <Link to={`/repo/${repo.id}`}>
-                  <Button variant="secondary" size="sm">
+                  <Button variant="secondary" className="h-8 px-2.5 text-xs">
                     Configure
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ArrowRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </Link>
               </CardFooter>
