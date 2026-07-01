@@ -31,6 +31,7 @@ export const errorConverter = (
         false,
         error.stack,
       );
+      error.originalError = err;
     }
   }
 
@@ -49,6 +50,7 @@ export const errorHandler = (
 
   // Always log the actual error
   logger.error({
+    err: err.originalError || err,
     message: err.message,
     statusCode: err.statusCode,
     isOperational: err.isOperational,
@@ -56,7 +58,6 @@ export const errorHandler = (
     path: req.originalUrl,
     query: req.query,
     params: req.params,
-    stack: err.stack,
   });
 
   // Hide internal errors from clients in production
