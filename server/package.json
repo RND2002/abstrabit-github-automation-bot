@@ -15,7 +15,7 @@
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:studio": "dotenv -e .env.local -- prisma studio",
-    "db:migrate:prod": "dotenv -e .env.prod -- prisma migrate deploy"
+    "db:migrate:prod": "prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
